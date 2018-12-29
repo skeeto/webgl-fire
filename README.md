@@ -10,6 +10,6 @@ shaders][gol].
 ## Controls
 
 * SPACE: Toggle pause
-* PgUP: Increase the burner temperature
-* PgDown: Decreate the burner temperature
+* PgUp: Increase the burner temperature
+* PgDown: Decrease the burner temperature
 * R: Reset the entire simulation (reinitialize WebGL state)
