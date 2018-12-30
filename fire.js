@@ -59,27 +59,30 @@ uniform float u_flame_height;
 uniform vec4 u_random;
 varying vec2 v_point;
 
-int get(ivec2 p) {
-    float depth = float(${DEPTH}) - 1.0;
-    vec2 scale = vec2(${WIDTH}, ${HEIGHT});
-    return int(texture2D(u_state, vec2(p) / scale).r * depth);
+float get(vec2 p) {
+    float depth = float(${DEPTH - 1});
+    vec2 scale = vec2(${WIDTH - 1}, ${HEIGHT - 1});
+    return floor(texture2D(u_state, p / scale).r * depth + 0.5);
 }
 
 float rand(vec2 s) {
-    return fract(sin(dot(s.xy, vec2(12.9898, 78.233))) * 43758.5453);
+    s += v_point;
+    float a = sin(dot(v_point + s, vec2(12.9898, 78.233)));
+    return fract(fract(a * 41.0744) * 86.9083);
 }
 
 void main() {
-    ivec2 p = ivec2(v_point * vec2(${WIDTH}, ${HEIGHT}));
-    if (p.y == 0) {
+    vec2 scale = vec2(${WIDTH - 1}, ${HEIGHT - 1});
+    vec2 pos = floor(v_point * scale + 0.5);
+    if (pos.y == 0.0) {
         gl_FragColor = vec4(u_temperature, 0, 0, 0);
     } else {
-        int dx = int(rand(v_point + u_random.zw) * 3.0) - 1;
-        int dy = int(rand(v_point - u_random.wx) * 3.0) - 2;
-        int r  = int(pow(rand(v_point + u_random.xy), u_flame_height) + 0.5);
-        int v = get(p + ivec2(dx, dy)) - r;
-        float depth = float(${DEPTH} - 1);
-        gl_FragColor = vec4(float(v) / depth, 0, 0, 0);
+        float dx = floor(rand(u_random.xy) * 3.0) - 1.0;
+        float dy = floor(rand(u_random.zw) * 3.0) - 2.0;
+        float r  = floor(rand(u_random.wx) + 1.0 - u_flame_height);
+        float v = get(pos + vec2(dx, dy)) - r;
+        float depth = float(${DEPTH - 1});
+        gl_FragColor = vec4(v / depth, 0, 0, 0);
     }
 }`,
 };
@@ -177,8 +180,8 @@ function Fire(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     let self = {
-        temperature: 1.0,  // 0.0 - 1.0
-        flame_height: 4.0, // 0.0 - inf
+        temperature:  1.0,  // 0.0 - 1.0
+        flame_height: 0.75, // 0.0 - 1.0
 
         update: function() {
             gl.useProgram(update.program);
