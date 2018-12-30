@@ -12,4 +12,5 @@ shaders][gol].
 * SPACE: Toggle pause
 * PgUp: Increase the burner temperature
 * PgDown: Decrease the burner temperature
+* Period: Advance state one step forward while paused
 * R: Reset the entire simulation (reinitialize WebGL state)

@@ -278,6 +278,12 @@ function Fire(gl) {
             case 34: /* PgDown */
                 fire.temperature = Math.max(fire.temperature - 0.1, 0);
                 break;
+            case 190: /* Period */
+                if (running)
+                    running = false;
+                else
+                    fire.update();
+                break;
             case 82: /* R */
                 fire.destroy();
                 fire = new Fire(gl);
