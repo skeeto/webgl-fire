@@ -264,8 +264,9 @@ function Fire(gl) {
     let canvas = document.querySelector('canvas');
     let gl = canvas.getContext('webgl');
     let fire = new Fire(gl);
-    let frame = 0;
     let running = true;
+    let period = 1000 / 70;  // 70 FPS (max)
+    let last = 0;
 
     window.addEventListener('keyup', function(e) {
         switch (e.which) {
@@ -288,19 +289,37 @@ function Fire(gl) {
                 fire.destroy();
                 fire = new Fire(gl);
                 break;
+            case 107: /* Plus */
+                period *= 1 / 1.2;
+                console.log(1000 / period + ' fps');
+                break;
+            case 109: /* Plus */
+                period *= 1.2;
+                console.log(1000 / period + ' fps');
+                break;
         }
     });
 
     function cb(t) {
+        let dirty = false;
         let ww = window.innerWidth;
         let wh = window.innerHeight;
         if (canvas.width != ww || canvas.height != wh) {
             canvas.width = ww;
             canvas.height = wh;
+            dirty = true;
         }
-        if (running)
-            fire.update();
-        fire.render();
+        if (running) {
+            let now = Date.now();
+            if (now - last > period) {
+                fire.update();
+                dirty = true;
+                last = now;
+            }
+        }
+        if (dirty) {
+            fire.render();
+        }
         window.requestAnimationFrame(cb);
     }
     window.requestAnimationFrame(cb);
