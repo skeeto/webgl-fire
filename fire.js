@@ -310,6 +310,7 @@ function Fire(gl) {
             case 82: /* r */
                 fire.destroy();
                 fire = new Fire(gl);
+                period = 1000 / 70;
                 break;
             case 107: /* Plus */
                 period *= 1 / 1.2;
