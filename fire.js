@@ -247,6 +247,19 @@ function Fire(gl) {
             gl.useProgram(null);
         },
 
+        clear: function() {
+            gl.bindTexture(gl.TEXTURE_2D, state0);
+            gl.texSubImage2D(
+                gl.TEXTURE_2D,
+                0, 0, 0,
+                WIDTH, HEIGHT,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                new Uint8Array(WIDTH * HEIGHT * 4)
+            );
+            gl.bindTexture(gl.TEXTURE_2D, null);
+        },
+
         destroy: function() {
             gl.deleteProgram(update.program);
             gl.deleteProgram(render.program);
@@ -279,13 +292,22 @@ function Fire(gl) {
             case 34: /* PgDown */
                 fire.temperature = Math.max(fire.temperature - 0.1, 0);
                 break;
-            case 190: /* Period */
-                if (running)
-                    running = false;
-                else
+            case 38: /* Up */
+                fire.flame_height = Math.min(1.0, fire.flame_height += 0.05);
+                console.log(fire.flame_height);
+                break;
+            case 40: /* Down */
+                fire.flame_height = Math.max(0.0, fire.flame_height -= 0.05);
+                console.log(fire.flame_height);
+                break;
+            case 65: /* e */
+                for (let i = 0; i < 1024; i++)
                     fire.update();
                 break;
-            case 82: /* R */
+            case 67: /* c */
+                fire.clear();
+                break;
+            case 82: /* r */
                 fire.destroy();
                 fire = new Fire(gl);
                 break;
@@ -296,6 +318,12 @@ function Fire(gl) {
             case 109: /* Plus */
                 period *= 1.2;
                 console.log(1000 / period + ' fps');
+                break;
+            case 190: /* Period */
+                if (running)
+                    running = false;
+                else
+                    fire.update();
                 break;
         }
     });

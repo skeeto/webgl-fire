@@ -13,4 +13,6 @@ shaders][gol].
 * PgUp/PgDown: Adjust the burner temperature
 * +/-: Adjust animation speed
 * Period: Advance state one step forward while paused
-* R: Reset the entire simulation (reinitialize WebGL state)
+* a: Instantly advance simulation 1024 steps
+* c: Clear the fire state to zero
+* r: Reset the entire simulation (reinitialize WebGL state)
