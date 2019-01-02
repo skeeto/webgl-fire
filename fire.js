@@ -278,6 +278,7 @@ function Fire(gl) {
     let gl = canvas.getContext('webgl');
     let fire = new Fire(gl);
     let running = true;
+    let dirty = false;
     let period = 1000 / 70;  // 70 FPS (max)
     let last = 0;
 
@@ -300,23 +301,28 @@ function Fire(gl) {
                 fire.flame_height = Math.max(0.0, fire.flame_height -= 0.05);
                 console.log(fire.flame_height);
                 break;
-            case 65: /* e */
+            case 65: /* a */
                 for (let i = 0; i < 1024; i++)
                     fire.update();
+                dirty = true;
                 break;
             case 67: /* c */
                 fire.clear();
+                dirty = true;
                 break;
             case 82: /* r */
                 fire.destroy();
                 fire = new Fire(gl);
                 period = 1000 / 70;
+                dirty = true;
                 break;
-            case 107: /* Plus */
+            case 107: /* Minus */
+            case 187:
                 period *= 1 / 1.2;
                 console.log(1000 / period + ' fps');
                 break;
             case 109: /* Plus */
+            case 189:
                 period *= 1.2;
                 console.log(1000 / period + ' fps');
                 break;
@@ -325,12 +331,12 @@ function Fire(gl) {
                     running = false;
                 else
                     fire.update();
+                dirty = true;
                 break;
         }
     });
 
     function cb(t) {
-        let dirty = false;
         let ww = window.innerWidth;
         let wh = window.innerHeight;
         if (canvas.width != ww || canvas.height != wh) {
@@ -348,6 +354,7 @@ function Fire(gl) {
         }
         if (dirty) {
             fire.render();
+            dirty = false;
         }
         window.requestAnimationFrame(cb);
     }
